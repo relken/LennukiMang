@@ -14,7 +14,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -28,6 +30,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
+
 import javafx.util.Duration;
 
 public class LennukiMang extends Application {
@@ -68,10 +71,8 @@ public class LennukiMang extends Application {
         lennuk2.setFitWidth(150);
         lennuk2.setPreserveRatio(true);
         ImageView rakett = new ImageView(RAKETT);
-
         elu = 1;
         kahurielu.setProgress(elu);
-
         lennuk1.setTranslateX(-500);
         lennuk1.setTranslateY(-500);
         lennuk2.setTranslateX(-200);
@@ -80,14 +81,18 @@ public class LennukiMang extends Application {
         rakett.setTranslateY(-1000);
         Group lennukid;
         lennukid = new Group(lennuk1, lennuk2);
-        Arc kahur = new Arc(LAIUS / 2, KORGUS - 50, 50, 50, 0, 180);
-        Rectangle kahur1 = new Rectangle((LAIUS / 2)-110, KORGUS-50, 220, 50);
+        Shape kahur = new Arc(LAIUS / 2, KORGUS - 50, 50, 50, 0, 180);
+        Rectangle kahurikeha = new Rectangle((LAIUS / 2)-110, KORGUS-50, 220, 80);
+        kahurikeha.setArcHeight(25);
+        kahurikeha.setArcWidth(25);
+
         Line kahuritoru = new Line(LAIUS / 2, 850, LAIUS / 2, 650);
+        Group kahurkokku = new Group(kahuritoru, kahurikeha, kahur);
         kahuritoru.setFill(Color.BLACK);
         kahuritoru.setStrokeType(StrokeType.CENTERED);
         kahuritoru.setStrokeWidth(15);
         kahur.setFill(Color.DARKGRAY);
-        kahur1.setFill(Color.DARKGRAY);
+        kahurikeha.setFill(Color.DARKGRAY);
         kahurielu.setLayoutX(LAIUS-300);
         kahurielu.setLayoutY(KORGUS-30);
         Text hitLabel = new Text();
@@ -122,7 +127,7 @@ public class LennukiMang extends Application {
         grid.setHalignment(label6, HPos.CENTER);
         grid.setStyle("-fx-background-color: #C0C0C0;");
         //grid.setGridLinesVisible(true);
-        HBox nupupaneel = new HBox();
+        HBox nupuPaneel = new HBox(5);
 
         Button manguSeis = new Button();
         manguSeis.setText("PAUS");
@@ -133,66 +138,36 @@ public class LennukiMang extends Application {
             {
                 if (e.getButton() == MouseButton.PRIMARY)
                 { if(manguseisund==false) {
-                    current.pause();
-                    current2.pause();
-                    manguSeis.setText("MÄNGI");
-                    if (pommAnimatsioon != null && pommAnimatsioon.getStatus() != Animation.Status.PAUSED)
-                    {pommAnimatsioon.pause();}
-                    if (pommAnimatsioon2 != null && pommAnimatsioon2.getStatus() != Animation.Status.PAUSED)
-                    {pommAnimatsioon2.pause();}
-                    if (rakettAnimatsioon != null && rakettAnimatsioon.getStatus() != Animation.Status.PAUSED)
-                    {rakettAnimatsioon.pause();}
-                    if (timeline != null && timeline.getStatus() != Animation.Status.PAUSED)
-                    {timeline.pause();}
-                    if (timeline2 != null && timeline2.getStatus() != Animation.Status.PAUSED)
-                    {timeline2.pause();}
-                    if (timeline3 != null && timeline3.getStatus() != Animation.Status.PAUSED)
-                    {timeline3.pause();}
-                    if (timeline4 != null && timeline4.getStatus() != Animation.Status.PAUSED)
-                    {timeline4.pause();}
-                    manguseisund = true;
+                    pausMang(manguSeis);
                 }
                 else if (manguseisund=true){
-                    manguSeis.setText("PAUS");
-                    current.play();
-                    current2.play();
-                    if (pommAnimatsioon != null && pommAnimatsioon.getStatus() == Animation.Status.PAUSED)
-                    {pommAnimatsioon.play();}
-                    if (pommAnimatsioon2 != null && pommAnimatsioon2.getStatus() == Animation.Status.PAUSED)
-                    {pommAnimatsioon2.play();}
-                    if (rakettAnimatsioon != null && rakettAnimatsioon.getStatus() == Animation.Status.PAUSED)
-                    {rakettAnimatsioon.play();}
-                    if (timeline != null && timeline.getStatus() == Animation.Status.PAUSED)
-                    {timeline.play();}
-                    if (timeline2 != null && timeline2.getStatus() == Animation.Status.PAUSED)
-                    {timeline2.pause();}
-                    if (timeline3 != null && timeline3.getStatus() == Animation.Status.PAUSED)
-                    {timeline3.play();}
-                    if (timeline4 != null && timeline4.getStatus() == Animation.Status.PAUSED)
-                    {timeline4.play();}
-                    manguseisund=false;
+                    mangiMang(manguSeis);
                 }
                 }
-
             }
         });
 
 
         Button valjuMangust = new Button();
         valjuMangust.setText("LÕPETA MÄNG");
+        valjuMangust.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 15));
+        manguSeis.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 15));
         valjuMangust.setOnAction((ActionEvent event) -> {
             Platform.exit();
         });
-        nupupaneel.getChildren().addAll(manguSeis, valjuMangust);
-        nupupaneel.relocate(LAIUS-300, KORGUS-70);
+        manguSeis.setPrefSize(170, 50);
+        valjuMangust.setPrefSize(170, 50);
+
+        nupuPaneel.getChildren().addAll(manguSeis, valjuMangust);
+        nupuPaneel.relocate(LAIUS-360, KORGUS-60);
+
         manguSeis.setFocusTraversable(false);
         valjuMangust.setFocusTraversable(false);
 
-
-
-        Pane raam = new Pane(taust, lennukid, kahuritoru, kahur, kahur1, grid, nupupaneel);
+        Pane raam = new Pane(taust, lennukid, kahurkokku, grid, nupuPaneel);
 
         Scene stseen = new Scene(raam, LAIUS, KORGUS);
+
         RotateTransition rotate = new RotateTransition(Duration.millis(2000), kahuritoru);
         rotate.setToAngle(-80);
         RotateTransition rotate2 = new RotateTransition(Duration.millis(2000), kahuritoru);
@@ -224,14 +199,24 @@ public class LennukiMang extends Application {
                 }
             }
         });
+        raam.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println(kahur);
+            }
+        });
+
+
 
         primaryStage.setTitle("LennukiMäng");
         primaryStage.setScene(stseen);
         taust.setFitWidth(LAIUS);
         taust.setFitHeight(KORGUS);
         primaryStage.show();
-        startAnimation(raam, lennuk1, rakett, kahur1, grid);
-        startAnimation2(raam, lennuk2, rakett, kahur1, grid);
+        startAnimation(raam, lennuk1, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
+        startAnimation2(raam, lennuk2, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
+
+
     }
 
     private void tulistaRakett(final Pane raam, final Line kahuritoru, ImageView rakett) {
@@ -273,7 +258,7 @@ public class LennukiMang extends Application {
         return x;
     }
 
-    private void startAnimation(Pane raam, ImageView lennuk1, ImageView rakett, Rectangle kahur1, GridPane grid) {
+    private void startAnimation(Pane raam, ImageView lennuk1, ImageView rakett, Shape kahur, GridPane grid, Rectangle kahurikeha,  Stage primaryStage, Button manguSeis, HBox nupuPaneel) {
         if (current != null) {
             current.stop();
         }
@@ -301,11 +286,11 @@ public class LennukiMang extends Application {
                     public void handle(ActionEvent event) {
                         if (lennuk1.getBoundsInParent().intersects(rakett.getBoundsInParent())) {
                             timeline.stop();
-                            lennukKuku(raam, lennuk1, rakett, kahur1, grid);
+                            lennukKuku(raam, lennuk1, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
                         }
-                        if (lennuk1.getBoundsInParent().getMaxX() > pommitusX && lennuk1.getBoundsInParent().getMaxX()<pommitusX+20) {
+                        if (lennuk1.getBoundsInParent().getMaxX() > pommitusX && lennuk1.getBoundsInParent().getMaxX()<pommitusX+8) {
                             timeline.stop();
-                            pommita(raam, lennuk1, kahur1, rakett, grid);
+                            pommita(raam, lennuk1, kahur, rakett, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
                             timeline.play();
                         }
                     }})).build();
@@ -324,11 +309,11 @@ public class LennukiMang extends Application {
         current.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                startAnimation(raam, lennuk1, rakett, kahur1, grid);
+                startAnimation(raam, lennuk1, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
             }
         });
     }
-    private void startAnimation2(Pane raam, ImageView lennuk2, ImageView rakett, Rectangle kahur1, GridPane grid) {
+    private void startAnimation2(Pane raam, ImageView lennuk2, ImageView rakett, Shape kahur, GridPane grid, Rectangle kahurikeha,  Stage primaryStage, Button manguSeis, HBox nupuPaneel) {
         if (current2 != null) {
             current2.stop();
         }
@@ -357,11 +342,11 @@ public class LennukiMang extends Application {
                     public void handle(ActionEvent event) {
                         if (lennuk2.getBoundsInParent().intersects(rakett.getBoundsInParent())) {
                             timeline2.stop();
-                            lennukKuku2(raam, lennuk2, rakett, kahur1, grid);
+                            lennukKuku2(raam, lennuk2, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
                         }
                         if (lennuk2.getBoundsInParent().getMaxX() > pommitusX && lennuk2.getBoundsInParent().getMaxX()<pommitusX+10) {
                             timeline2.stop();
-                            pommita2(raam, lennuk2, kahur1, rakett, grid);
+                            pommita2(raam, lennuk2, kahur, rakett, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
                             timeline2.play();
                         }}})).build();
         timeline2.play();
@@ -378,13 +363,13 @@ public class LennukiMang extends Application {
                     @Override
                     public void handle(ActionEvent event) {
                         timeline.stop();
-                        startAnimation2(raam, lennuk2, rakett, kahur1, grid);
+                        startAnimation2(raam, lennuk2, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
                     }
                 }).build();
         current2.play();
     }
 
-    private void lennukKuku(Pane raam, ImageView lennuk1, ImageView rakett, Rectangle kahur1, GridPane grid) {
+    private void lennukKuku(Pane raam, ImageView lennuk1, ImageView rakett, Shape kahur, GridPane grid, Rectangle kahurikeha,  Stage primaryStage, Button manguSeis, HBox nupuPaneel) {
         rakett.setVisible(false);
         hitcounter.set(hitcounter.get()+1);
         Animation test2 = TranslateTransitionBuilder.create()
@@ -397,11 +382,11 @@ public class LennukiMang extends Application {
             @Override
             public void handle(ActionEvent event) {
                 test2.stop();
-                startAnimation(raam, lennuk1, rakett, kahur1, grid);
+                startAnimation(raam, lennuk1, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
             }
         });
     }
-    private void lennukKuku2(Pane raam, ImageView lennuk2, ImageView rakett, Rectangle kahur1, GridPane grid) {
+    private void lennukKuku2(Pane raam, ImageView lennuk2, ImageView rakett, Shape kahur, GridPane grid, Rectangle kahurikeha, Stage primaryStage, Button manguSeis, HBox nupuPaneel) {
         rakett.setVisible(false);
         hitcounter.set(hitcounter.get()+1);
         Animation test3 = TranslateTransitionBuilder.create()
@@ -415,16 +400,17 @@ public class LennukiMang extends Application {
             @Override
             public void handle(ActionEvent event) {
                 test3.stop();
-                startAnimation2(raam, lennuk2, rakett, kahur1, grid);
+                startAnimation2(raam, lennuk2, rakett, kahur, grid, kahurikeha, primaryStage, manguSeis, nupuPaneel);
             }
         });
     }
-    private void pommita(Pane raam, ImageView lennuk1, Rectangle kahur1, ImageView rakett, GridPane grid){
-        final int pommitusKohtX = JUHUSLIK(1200, 100);
+    private void pommita(Pane raam, ImageView lennuk1, Shape kahur, ImageView rakett, GridPane grid, Rectangle kahurikeha, Stage primaryStage, Button manguSeis, HBox nupuPaneel){
+        final int pommitusKohtX = JUHUSLIK(900, 300);
         System.out.println(pommitusKohtX);
         Shape pomm = new Circle(10, Color.BLACK);
         raam.getChildren().add(pomm);
         grid.toFront();
+        nupuPaneel.toFront();
         pommAnimatsioon = TranslateTransitionBuilder.create()
                 .node(pomm)
                 .duration(Duration.seconds(5))
@@ -447,12 +433,14 @@ public class LennukiMang extends Application {
                 .keyFrames(new KeyFrame(Duration.millis(10), new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        if (pomm.getBoundsInParent().intersects(kahur1.getBoundsInParent())) {
+                        if (pomm.getBoundsInParent().intersects(kahur.getBoundsInParent()) ||
+                            pomm.getBoundsInParent().intersects(kahurikeha.getBoundsInParent())) {
                             timeline3.stop();
                             pomm.setVisible(false);
-                            elu = elu - 0.05;
+                            elu = elu - 0.3;
                             kahurielu.setProgress(elu);
                             System.out.println(elu);
+                            kasOnMangLabi(raam, primaryStage, manguSeis);
                         }
                         if (pomm.getBoundsInParent().intersects(rakett.getBoundsInParent())) {
                             timeline3.stop();
@@ -465,12 +453,13 @@ public class LennukiMang extends Application {
         timeline3.play();
 
     }
-    private void pommita2(Pane raam, ImageView lennuk2, Rectangle kahur1, ImageView rakett, GridPane grid){
-        final int pommitusKohtX = JUHUSLIK(900, 300);
+    private void pommita2(Pane raam, ImageView lennuk2, Shape kahur, ImageView rakett, GridPane grid, Rectangle kahurikeha, Stage primaryStage, Button manguSeis, HBox nupuPaneel){
+        final int pommitusKohtX = JUHUSLIK(700, 400);
         System.out.println(pommitusKohtX);
         Shape pomm2 = new Circle(15, Color.BLACK);
         raam.getChildren().add(pomm2);
         grid.toFront();
+        nupuPaneel.toFront();
         pommAnimatsioon2 = TranslateTransitionBuilder.create()
                 .node(pomm2)
                 .duration(Duration.seconds(8))
@@ -492,13 +481,15 @@ public class LennukiMang extends Application {
                 .keyFrames(new KeyFrame(Duration.millis(10), new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent event) {
-                        if (pomm2.getBoundsInParent().intersects(kahur1.getBoundsInParent())) {
+                        if (pomm2.getBoundsInParent().intersects(kahur.getBoundsInParent()) ||
+                            pomm2.getBoundsInParent().intersects(kahurikeha.getBoundsInParent())) {
                             timeline4.stop();
                             pomm2.setVisible(false);
-                            elu = elu - 0.1;
+                            elu = elu - 0.4;
                             kahurielu.setProgress(elu);
                             System.out.println(kahurielu.progressProperty());
                             System.out.println(elu);
+                            kasOnMangLabi(raam, primaryStage, manguSeis);
                         }
                         if (pomm2.getBoundsInParent().intersects(rakett.getBoundsInParent())) {
                             timeline4.stop();
@@ -510,9 +501,85 @@ public class LennukiMang extends Application {
                     }})).build();
         timeline4.play();
     }
+    private void kasOnMangLabi(Pane raam, Stage primaryStage, Button manguSeis) {
+        if (elu <= 0) {
+            pausMang(manguSeis);
+            Label mangLabi = new Label("MÄNG LÄBI");
+            mangLabi.setFont(Font.font("Serif", FontWeight.BOLD, 150));
+            DropShadow vari = new DropShadow(20, Color.DARKGREEN);
+            mangLabi.setEffect(vari);
+            Button restartNupp = new Button("ALUSTA UUT MÄNGU");
+            restartNupp.setPrefSize(300, 50);
+            restartNupp.setFont(Font.font(20));
+            raam.getChildren().addAll(mangLabi, restartNupp);
+            mangLabi.relocate(200, 200);
+            restartNupp.relocate(500, 400);
+            manguSeis.setDisable(true);
+            restartNupp.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent t) {
+                    try {
+                        start(primaryStage);
+                        hitcounter.setValue(0);
+                        lasuLoendur.setValue(0);
+                        pommiLoendur.setValue(0);
+                        elu = 1;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+    private void pausMang(Button manguSeis) {
+        current.pause();
+        current2.pause();
+        manguSeis.setText("MÄNGI");
+        if (pommAnimatsioon != null && pommAnimatsioon.getStatus() != Animation.Status.PAUSED)
+        {pommAnimatsioon.pause();}
+        if (pommAnimatsioon2 != null && pommAnimatsioon2.getStatus() != Animation.Status.PAUSED)
+        {pommAnimatsioon2.pause();}
+        if (rakettAnimatsioon != null && rakettAnimatsioon.getStatus() != Animation.Status.PAUSED)
+        {rakettAnimatsioon.pause();}
+        if (timeline != null && timeline.getStatus() != Animation.Status.PAUSED)
+        {timeline.pause();}
+        if (timeline2 != null && timeline2.getStatus() != Animation.Status.PAUSED)
+        {timeline2.pause();}
+        if (timeline3 != null && timeline3.getStatus() != Animation.Status.PAUSED)
+        {timeline3.pause();}
+        if (timeline4 != null && timeline4.getStatus() != Animation.Status.PAUSED)
+        {timeline4.pause();}
+        manguseisund = true;
+    }
+    private void mangiMang(Button manguSeis) {
+        manguSeis.setText("PAUS");
+        current.play();
+        current2.play();
+        if (pommAnimatsioon != null && pommAnimatsioon.getStatus() == Animation.Status.PAUSED)
+        {pommAnimatsioon.play();}
+        if (pommAnimatsioon2 != null && pommAnimatsioon2.getStatus() == Animation.Status.PAUSED)
+        {pommAnimatsioon2.play();}
+        if (rakettAnimatsioon != null && rakettAnimatsioon.getStatus() == Animation.Status.PAUSED)
+        {rakettAnimatsioon.play();}
+        if (timeline != null && timeline.getStatus() == Animation.Status.PAUSED)
+        {timeline.play();}
+        if (timeline2 != null && timeline2.getStatus() == Animation.Status.PAUSED)
+        {timeline2.pause();}
+        if (timeline3 != null && timeline3.getStatus() == Animation.Status.PAUSED)
+        {timeline3.play();}
+        if (timeline4 != null && timeline4.getStatus() == Animation.Status.PAUSED)
+        {timeline4.play();}
+        manguseisund=false;
+    }
+
+
+
+
     public static void main(String[] args) {
         launch(args);
     }
+
+
 }
 
 
